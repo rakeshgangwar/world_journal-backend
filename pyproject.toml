@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "world-journal-backend"
+version = "0.1.0"
+description = ""
+authors = ["Rakesh Gangwar <mail@rakeshgangwar.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.5"
+uvicorn = "^0.32.1"
+langchain = "^0.3.7"
+langchain-openai = "^0.2.9"
+requests = "^2.32.3"
+feedparser = "^6.0.11"
+bs4 = "^0.0.2"
+apscheduler = "^3.10.4"
+python-dotenv = "^1.0.1"
+langchain-ollama = "^0.2.0"
+psycopg2 = "^2.9.10"
+langchain-anthropic = "^0.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

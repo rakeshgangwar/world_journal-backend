@@ -1,0 +1,49 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
+import feedparser
+import requests
+from bs4 import BeautifulSoup
+from services.langchain_utils import summarize_with_chain
+from models.rss_feed import get_feeds_by_topic
+
+def fetch_rss_data(topic: str) -> str:
+    feeds = get_feeds_by_topic(topic)
+    if not feeds:
+        return f"No RSS feeds available for topic: {topic}"
+    print(f"Feeds for topic {topic}: {feeds}")
+
+    context = []
+    for feed in feeds:
+        parsed_feed = feedparser.parse(feed.feed_url)
+        for entry in parsed_feed.entries[:5]:  # Limit to 5 entries
+            print(f"Entry: {entry.title}")
+            scraped_content = scrape_article(entry.link)
+            # print(f"Scraped content for {entry.title}: {scraped_content}")
+            if scraped_content:
+                summary = summarize_with_chain(scraped_content, entry.title, False)
+                # print(f"Summary for {entry.title}: {summary}")
+                context.append(f"- **{entry.title}**: {summary} ({entry.link})")
+            else:
+                context.append(f"- **{entry.title}**: Unable to fetch content. ({entry.link})")
+
+    # print(f"Context for topic {topic}: {context}")
+    return "\n".join(context)
+
+def scrape_article(url: str) -> str:
+    try:
+        print(f"Scraping {url}")
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, "html.parser")
+        paragraphs = soup.find_all("p")
+        content = " ".join([p.get_text() for p in paragraphs])
+        return content if len(content) > 200 else None
+    except Exception as e:
+        print(f"Error scraping {url}: {e}")
+        return None
+
+# print(fetch_rss_data("Life and Evolution"))
+
+
