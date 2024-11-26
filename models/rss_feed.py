@@ -1,4 +1,5 @@
-from database import SessionLocal, RSSFeed
+from database import SessionLocal, RSSFeed, Feeds
+
 
 def get_feeds_by_topic(topic: str):
     """
@@ -8,6 +9,16 @@ def get_feeds_by_topic(topic: str):
     feeds = session.query(RSSFeed).filter(RSSFeed.topic == topic).all()
     session.close()
     return feeds
+
+def get_feeds_by_category(category_id: int):
+    """
+    Fetch all RSS feeds for a specific category.
+    """
+    session = SessionLocal()
+    feeds = session.query(Feeds).filter(Feeds.categoryId == category_id).all()
+    session.close()
+    return feeds
+
 
 def add_feed(topic: str, feed_url: str):
     """

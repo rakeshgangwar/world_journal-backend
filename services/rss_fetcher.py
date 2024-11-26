@@ -1,4 +1,8 @@
+import time
+
 from dotenv import load_dotenv
+
+from supabase_api import fetch_feeds_by_category
 
 load_dotenv()
 
@@ -29,6 +33,30 @@ def fetch_rss_data(topic: str) -> str:
                 context.append(f"- **{entry.title}**: Unable to fetch content. ({entry.link})")
 
     # print(f"Context for topic {topic}: {context}")
+    return "\n".join(context)
+
+def fetch_category_rss(category_id: int) -> str:
+    feeds = fetch_feeds_by_category(category_id)
+    if not feeds:
+        return f"No RSS feeds available for category ID: {category_id}"
+    print(f"Feeds for category ID {category_id}: {feeds}")
+
+    context = []
+    for feed in feeds:
+        parsed_feed = feedparser.parse(feed["feed_url"])
+        for entry in parsed_feed.entries[:5]:  # Limit to 5 entries
+            if hasattr(entry, 'published_parsed') and entry.published_parsed.tm_year == time.localtime().tm_year and entry.published_parsed.tm_mon == time.localtime().tm_mon and entry.published_parsed.tm_mday == time.localtime().tm_mday:
+                print(f"Entry: {entry.title}")
+                scraped_content = scrape_article(entry.link)
+                # print(f"Scraped content for {entry.title}: {scraped_content}")
+                if scraped_content:
+                    summary = summarize_with_chain(scraped_content, entry.title, False)
+                    # print(f"Summary for {entry.title}: {summary}")
+                    context.append(f"- **{entry.title}**: {summary} ({entry.link})")
+                else:
+                    context.append(f"- **{entry.title}**: Unable to fetch content. ({entry.link})")
+
+    # print(f"Context for category ID {category_id}: {context}")
     return "\n".join(context)
 
 def scrape_article(url: str) -> str:

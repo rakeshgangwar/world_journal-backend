@@ -16,5 +16,13 @@ class RSSFeed(Base):
     topic = Column(String, index=True)
     feed_url = Column(String)
 
+class Feeds(Base):
+    __tablename__ = "feeds"
+    feedId = Column(Integer, primary_key=True, index=True)
+    categoryId = Column(Integer)
+    title = Column(String, index=True)
+    description = Column(String)
+    feed_url = Column(String)
+
 def init_db():
     Base.metadata.create_all(bind=engine)
