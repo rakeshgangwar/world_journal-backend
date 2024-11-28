@@ -9,8 +9,9 @@ load_dotenv()
 import feedparser
 import requests
 from bs4 import BeautifulSoup
-from services.langchain_utils import summarize_with_chain
+from earth.langchain_utils import summarize_with_chain
 from models.rss_feed import get_feeds_by_topic
+
 
 def fetch_rss_data(topic: str) -> str:
     feeds = get_feeds_by_topic(topic)
@@ -34,6 +35,7 @@ def fetch_rss_data(topic: str) -> str:
 
     # print(f"Context for topic {topic}: {context}")
     return "\n".join(context)
+
 
 def fetch_category_rss(category_id: int) -> str:
     feeds = fetch_feeds_by_category(category_id)
@@ -59,10 +61,13 @@ def fetch_category_rss(category_id: int) -> str:
     # print(f"Context for category ID {category_id}: {context}")
     return "\n".join(context)
 
+
 def scrape_article(url: str) -> str:
     try:
         print(f"Scraping {url}")
-        response = requests.get(url, timeout=10)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+        response = requests.get(url, timeout=10, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         paragraphs = soup.find_all("p")
@@ -73,5 +78,3 @@ def scrape_article(url: str) -> str:
         return None
 
 # print(fetch_rss_data("Life and Evolution"))
-
-

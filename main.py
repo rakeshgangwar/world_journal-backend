@@ -8,7 +8,7 @@ load_dotenv()
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from database import init_db
 from models.rss_feed import get_feeds_by_topic, add_feed, delete_feed, get_feeds_by_category
-from services.workflow import process_and_publish
+from earth.workflow import process_and_publish
 from scheduler import schedule_jobs
 
 app = FastAPI()

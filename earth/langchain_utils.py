@@ -1,3 +1,6 @@
+import time
+
+import anthropic
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
@@ -8,9 +11,9 @@ from langchain_anthropic import ChatAnthropic
 # llm = ChatOpenAI(model="gpt-4-turbo", temperature=0.7)
 # llm = ChatOllama(model="mistral:latest", temperature=0.7)
 
-summarising_llm = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0.1)
-title_llm = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0.1)
-blog_llm = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0.5)
+summarising_llm = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0.3)
+title_llm = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0.8)
+blog_llm = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0.7)
 
 # summarising_llm = OllamaLLM(model="llama3.2:latest", temperature=0.1)
 # title_llm = OllamaLLM(model="llama3.2:latest", temperature=0.1)
@@ -30,6 +33,7 @@ Summarize the following article:
 {content}
 Summary:
 """
+
 
 def summarize_with_chain(content: str, title: str, short: bool) -> str:
     """
@@ -55,6 +59,7 @@ def summarize_with_chain(content: str, title: str, short: bool) -> str:
     print(result)
     return result.content
 
+
 def generate_blog_with_chain(prompt: str) -> str:
     """
     Generate blog content using a LangChain chain.
@@ -63,8 +68,21 @@ def generate_blog_with_chain(prompt: str) -> str:
     prompt_template = PromptTemplate(input_variables=["prompt"], template="{prompt}")
     # print("Generated Prompt ---", prompt1)
     chain = prompt_template | blog_llm
-    blog = chain.invoke({"prompt": prompt})
-    return blog.content
+    max_retries = 5
+    backoff_factor = 2
+    for attempt in range(max_retries):
+        try:
+            blog = chain.invoke({"prompt": prompt})
+            return blog.content
+        except anthropic.InternalServerError as e:
+            if 'overloaded' in str(e).lower():
+                wait_time = backoff_factor ** attempt
+                print(f"Anthropic API overloaded. Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                raise e
+    raise RetryException("Failed to generate blog content after multiple retries due to API overload.")
+
 
 def title_with_chain(content: str) -> str:
     """
@@ -78,3 +96,7 @@ def title_with_chain(content: str) -> str:
     chain = prompt | title_llm
     result = chain.invoke({"content": content})
     return result.content
+
+
+class RetryException(Exception):
+    pass

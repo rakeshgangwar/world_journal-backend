@@ -1,5 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from services.workflow import process_and_publish
+from earth.workflow import process_and_publish
 from models.rss_feed import get_feeds_by_topic
 import random
 

@@ -1,7 +1,7 @@
-from services.rss_fetcher import fetch_rss_data, fetch_category_rss
-from services.prompt_generator import generate_prompt
-from services.langchain_utils import summarize_with_chain, generate_blog_with_chain, title_with_chain
-from services.publisher import publish_blog
+from earth.rss_fetcher import fetch_rss_data, fetch_category_rss
+from wheel.prompt_generator import generate_prompt
+from earth.langchain_utils import summarize_with_chain, generate_blog_with_chain, title_with_chain
+from earth.publisher import publish_blog
 from supabase_api import fetch_category
 
 
@@ -24,8 +24,14 @@ def process_and_publish(category_id: int):
     summary = summarize_with_chain(blog_content, title, True)
 
     # Publish to TinaCMS
-    publish_blog(category_name, title, blog_content, summary)
+    # publish_blog(category_name, title, blog_content, summary)
+
+    print({"title": title, "content": blog_content, "summary": summary})
 
     return {"title": title, "content": blog_content, "summary": summary}
 
+# process_and_publish(11)
+
 # process_and_publish("Life and Evolution")
+
+
