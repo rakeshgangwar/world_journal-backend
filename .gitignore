@@ -28,3 +28,14 @@ archive.zip
 
 # macOS
 .DS_Store
+
+# .dockerignore
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.log
+.git
+.gitignore
