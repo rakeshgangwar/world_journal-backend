@@ -35,11 +35,11 @@ Summary:
 """
 
 
-def summarize_with_chain(content: str, title: str, short: bool) -> str:
+def summarize_with_chain(content: str, short: bool) -> str:
     """
     Summarize content using a LangChain summarization chain.
     """
-    print(f"Summarizing content: {title}")
+    print(f"Summarizing content")
     if short:
         prompt = PromptTemplate(
             input_variables=["content"],
@@ -84,17 +84,17 @@ def generate_blog_with_chain(prompt: str) -> str:
     raise RetryException("Failed to generate blog content after multiple retries due to API overload.")
 
 
-def title_with_chain(content: str) -> str:
+def title_with_chain(summary: str) -> str:
     """
     Summarize content using a LangChain summarization chain.
     """
     print(f"Getting Title for the Blog Post")
     prompt = PromptTemplate(
-        input_variables=["content"],
-        template="Generate single journal title for:\n\n{content}\n\nDo not provide any other information except the title. Final answer should be only a title with maximum 10 words.\n\nTitle:",
+        input_variables=["summary"],
+        template="Generate single journal title for:\n\n{summary}\n\nDo not provide any other information except the title. Final answer should be only a title with maximum 10 words.\n\nTitle:",
     )
     chain = prompt | title_llm
-    result = chain.invoke({"content": content})
+    result = chain.invoke({"content": summary})
     return result.content
 
 

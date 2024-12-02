@@ -8,6 +8,19 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 API_KEY = os.getenv("SUPABASE_API_KEY")
 
+
+def fetch_all_feeds():
+    headers = {
+        "apikey": API_KEY,
+        "Authorization": f"Bearer {API_KEY}",
+    }
+
+    response = requests.get(SUPABASE_URL + "feeds", headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
+
 def fetch_feeds_by_category(category_id: int = None):
     headers = {
         "apikey": API_KEY,

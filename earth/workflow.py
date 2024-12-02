@@ -20,8 +20,8 @@ def process_and_publish(category_id: int):
     prompt = generate_prompt(category_name, context)
     blog_content = generate_blog_with_chain(prompt)
 
-    title = title_with_chain(blog_content)
-    summary = summarize_with_chain(blog_content, title, True)
+    summary = summarize_with_chain(blog_content, True)
+    title = title_with_chain(summary)
 
     # Publish to TinaCMS
     publish_blog(category_name, title, blog_content, summary)
