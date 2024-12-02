@@ -27,7 +27,7 @@ def fetch_rss_data(topic: str) -> str:
             scraped_content = scrape_article(entry.link)
             # print(f"Scraped content for {entry.title}: {scraped_content}")
             if scraped_content:
-                summary = summarize_with_chain(scraped_content, entry.title, False)
+                summary = summarize_with_chain(scraped_content, False)
                 # print(f"Summary for {entry.title}: {summary}")
                 context.append(f"- **{entry.title}**: {summary} ({entry.link})")
             else:
@@ -52,7 +52,7 @@ def fetch_category_rss(category_id: int) -> str:
                 scraped_content = scrape_article(entry.link)
                 # print(f"Scraped content for {entry.title}: {scraped_content}")
                 if scraped_content:
-                    summary = summarize_with_chain(scraped_content, entry.title, False)
+                    summary = summarize_with_chain(scraped_content, False)
                     # print(f"Summary for {entry.title}: {summary}")
                     context.append(f"- **{entry.title}**: {summary} ({entry.link})")
                 else:

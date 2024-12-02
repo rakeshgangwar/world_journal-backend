@@ -94,7 +94,7 @@ def title_with_chain(summary: str) -> str:
         template="Generate single journal title for:\n\n{summary}\n\nDo not provide any other information except the title. Final answer should be only a title with maximum 10 words.\n\nTitle:",
     )
     chain = prompt | title_llm
-    result = chain.invoke({"content": summary})
+    result = chain.invoke({"summary": summary})
     return result.content
 
 
